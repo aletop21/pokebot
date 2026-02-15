@@ -15,7 +15,7 @@ This project adds **real-time battlefield position tracking** on top of battle-w
 ## Main files
 
 - `bot_engine_auto.py`: Core combat/capture automation state machine.
-- `gui_auto.py`: Tkinter configuration UI for commands, hover-based mapping confirmation, and pokeball mapping.
+- `gui_auto.py`: Tkinter configuration UI for commands and pokeball mapping.
 - `tests/test_bot_engine_auto.py`: Unit tests for detect/track/throw behavior.
 - `build_exe.py`: Build helper that packages the app into a Windows `.exe` using PyInstaller.
 - `build_exe.bat`: Windows shortcut script to build the `.exe`.
@@ -28,8 +28,8 @@ python gui_auto.py
 
 Then:
 1. Configure commands (`m12,m11,...`).
-2. Use the live mouse panel and **Use Hover** buttons to confirm ball positions.
-3. Add optional pokemon-specific ball positions with each row's **Use Hover** button.
+2. Configure default ball item position.
+3. Add optional pokemon-specific ball positions.
 4. Press **Start** and run a demo tick.
 
 ## Build a Windows EXE

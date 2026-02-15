@@ -13,6 +13,7 @@ class AutoBotGUI(tk.Tk):
         self.title("Tibia Pokemon Auto Bot")
         self.geometry("860x620")
         self.minsize(820, 580)
+        self.geometry("720x520")
 
         self.command_profile_name = tk.StringVar(value="default")
         self.commands_text = tk.StringVar(value="m12,m11,m10,tm1,mt4")
@@ -22,6 +23,8 @@ class AutoBotGUI(tk.Tk):
 
         # Each row: {name_var, pos_var, frame, row_index}
         self.special_map_rows: list[dict[str, object]] = []
+
+        self.special_map_rows: list[tuple[tk.StringVar, tk.StringVar]] = []
 
         self.engine: BattleBotEngine | None = None
         self.input_adapter = RecordingInputAdapter()
@@ -155,6 +158,49 @@ class AutoBotGUI(tk.Tk):
         )
 
         self.special_map_rows.append({"name_var": name_var, "pos_var": pos_var})
+        self._build_layout()
+
+    def _build_layout(self) -> None:
+        container = ttk.Frame(self, padding=12)
+        container.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(container, text="Command Profile Name").grid(row=0, column=0, sticky="w")
+        ttk.Entry(container, textvariable=self.command_profile_name, width=40).grid(row=0, column=1, sticky="ew", padx=8)
+
+        ttk.Label(container, text="Commands (comma-separated)").grid(row=1, column=0, sticky="w")
+        ttk.Entry(container, textvariable=self.commands_text, width=40).grid(row=1, column=1, sticky="ew", padx=8)
+
+        ttk.Label(container, text="Default Pokeball Name").grid(row=2, column=0, sticky="w")
+        ttk.Entry(container, textvariable=self.default_ball_name, width=40).grid(row=2, column=1, sticky="ew", padx=8)
+
+        ttk.Label(container, text="Default Ball Position (x,y)").grid(row=3, column=0, sticky="w")
+        ttk.Entry(container, textvariable=self.default_ball_position, width=40).grid(row=3, column=1, sticky="ew", padx=8)
+
+        special_frame = ttk.LabelFrame(container, text="Pokemon-specific ball mapping")
+        special_frame.grid(row=4, column=0, columnspan=2, sticky="nsew", pady=10)
+        special_frame.columnconfigure(0, weight=1)
+        special_frame.columnconfigure(1, weight=1)
+
+        ttk.Button(special_frame, text="Add mapping", command=lambda: self._add_special_row(special_frame)).grid(row=0, column=0, sticky="w", padx=4, pady=4)
+
+        controls = ttk.Frame(container)
+        controls.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+
+        ttk.Button(controls, text="Start", command=self.start_bot).pack(side=tk.LEFT)
+        ttk.Button(controls, text="Run Demo Tick", command=self.run_demo_tick).pack(side=tk.LEFT, padx=6)
+        ttk.Button(controls, text="Show Event Log", command=self.show_log).pack(side=tk.LEFT)
+
+        container.columnconfigure(1, weight=1)
+        container.rowconfigure(4, weight=1)
+
+    def _add_special_row(self, frame: ttk.LabelFrame) -> None:
+        name_var = tk.StringVar()
+        pos_var = tk.StringVar(value="120,120")
+        row = len(self.special_map_rows) + 1
+
+        ttk.Entry(frame, textvariable=name_var, width=24).grid(row=row, column=0, sticky="ew", padx=4, pady=2)
+        ttk.Entry(frame, textvariable=pos_var, width=24).grid(row=row, column=1, sticky="ew", padx=4, pady=2)
+        self.special_map_rows.append((name_var, pos_var))
 
     def _parse_point(self, raw: str) -> Tuple[int, int]:
         x_str, y_str = [s.strip() for s in raw.split(",", 1)]
@@ -176,6 +222,7 @@ class AutoBotGUI(tk.Tk):
             assert isinstance(name_var, tk.StringVar)
             assert isinstance(pos_var, tk.StringVar)
 
+        for name_var, pos_var in self.special_map_rows:
             pname = name_var.get().strip().lower()
             if not pname:
                 continue
