@@ -10,6 +10,7 @@ This project adds **real-time battlefield position tracking** on top of battle-w
 - Tracks each pokemon's last known battlefield coordinates during combat.
 - When a pokemon disappears from battle list (defeated), throws the selected pokeball at the exact tracked coordinates.
 - Supports per-pokemon pokeball selection, with a default fallback ball.
+- Includes **hover-to-confirm mapping** in the GUI so you can move your mouse to a desired point and apply that exact coordinate to mapping fields.
 
 ## Main files
 
